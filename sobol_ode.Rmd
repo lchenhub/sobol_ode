@@ -1,0 +1,23 @@
+---
+title: "Sobol_ODE"
+output: html_document
+authors: "Kristina Glass and Liane Chen"
+date: "2024-05-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(sensitivity)
+library(tidyverse)
+library(gridExtra)
+library(purrr)
+library(ggpubr)
+```
+
+##Implement model
+Implement this model of forest growth (where forest size in measured in units of carbon (C))
+  dC/dt = r ∗ C for forests where C is below a threshold canopy closure
+  dC/dt = g ∗ (1 − C/K) for forests where carbon is at or above the threshold canopy closure
+
+K is a carrying capacity in units of carbon, and e forest (C), Canopy closure threshold and carrying capacity are all in units of carbon
