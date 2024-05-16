@@ -97,11 +97,14 @@ S_indices <- sobol$S
 T_indices <- sobol$T
 
 # Convert Sobol indices to data frames for plotting
-S_indices_df <- as.data.frame(S_indices)
-T_indices_df <- as.data.frame(T_indices)
+X1_df <- as.data.frame(X1$canopy_threshold)
+X1_df <- X1_df[!is.na(X1_df), ]
+
+X2_df <- as.data.frame(X2$canopy_threshold)
+X2_df <- X2_df[!is.na(X2_df), ]
 
 # Plot the first-order Sobol indices
-ggplot(S_indices_df, aes(x = reorder(row.names(S_indices_df), T_indices_df), y = T_indices_df)) +
+ggplot(S_indices_df, aes(x = reorder(row.names(X1_df), X2_df), y = X2_df)) +
   geom_bar(stat = "identity", fill = "blue") +
   labs(title = "First-Order Sobol Sensitivity Analysis",
        x = "Parameters",
@@ -120,15 +123,27 @@ ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), T_indices_df), y =
 
 
 #Try plotting as a boxplot (#5 on assignment prompt)
-ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), params), y = params)) +
+ggplot(T_indices_df, aes(x = reorder(row.names(X1_df), X2_df), y = X1_df)) +
   geom_boxplot(fill = "red") +  # Change to geom_boxplot() for box plot
   labs(title = "Total Sobol Sensitivity Analysis",
        x = "Parameters",
        y = "Total Sensitivity Index (T)") +
+  scale_y_continuous(limits = c(41.9098164851151, 58.6617485020237)) +
   theme_minimal() +
   coord_flip()
 
-#okay I see the error now. S_indices and T_indices are empty
+
+#try to fix
+ggplot(T_indices_df, aes(x = X1_df, y= X2_df)) +
+  geom_boxplot(fill = "red") +
+  labs(title = "Total Sobol Sensitivity Analysis",
+       x = "Parameters",
+       y = "Total Sensitivity Index (T)") +
+  scale_y_continuous(limits = c(41.9098164851151, 58.6617485020237)) +
+  theme_minimal() +
+  coord_flip()
+
+
 ```
 
 
