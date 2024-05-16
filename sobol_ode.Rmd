@@ -92,6 +92,13 @@ sobol
 
 
 ```{r, warning=FALSE}
+# Extract Sobol indices
+S_indices <- sobol$S
+T_indices <- sobol$T
+
+# Convert Sobol indices to data frames for plotting
+S_indices_df <- as.data.frame(S_indices)
+T_indices_df <- as.data.frame(T_indices)
 
 # Convert Sobol indices to data frames for plotting
 X1_df <- as.data.frame(X1$canopy_threshold)
@@ -111,12 +118,12 @@ X2_df <- X2_df[!is.na(X2_df), ]
 
 # Plot the total Sobol indices
 # ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), T_indices_df), y = T_indices_df)) +
-#   geom_bar(stat = "identity", fill = "red") +
-#   labs(title = "Total Sobol Sensitivity Analysis",
-#        x = "Parameters",
-#        y = "Total Sensitivity Index (T)") +
-#   theme_minimal() +
-#   coord_flip()
+  # geom_bar(stat = "identity", fill = "red") +
+  # labs(title = "Total Sobol Sensitivity Analysis",
+  #      x = "Parameters",
+  #      y = "Total Sensitivity Index (T)") +
+  # theme_minimal() +
+  # coord_flip()
 
 
 #Plot as a boxplot 
@@ -132,8 +139,4 @@ ggplot(T_indices_df, aes(x = X1_df, y= X2_df)) +
 
 ```
 
-
-```{r}
-
-```
 
