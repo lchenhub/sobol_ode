@@ -139,4 +139,11 @@ ggplot(T_indices_df, aes(x = X1_df, y= X2_df)) +
 
 ```
 
+```
+Discussion: It looks like when the parameters are close to one another. That may 
+imply the carrying capacity and threshold will be met with the parameters are 
+maxed out with one another. This could mean that forest size may cap out when 
+the parameters are capped.
 
+
+```
