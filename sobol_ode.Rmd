@@ -138,5 +138,8 @@ ggplot(T_indices_df, aes(x = X1_df, y= X2_df)) +
 
 
 ```
+Discussion: In 2-3 sentences, discuss what the results of your simulation might mean. (For example think about
+how what parameters climate change might influence).
 
+Over the next 300 years, forests may see an increase in carrying capacity due to fluctuations in certain parameters. This change could be influenced by things like changes in atmospheric CO2 levels
 
