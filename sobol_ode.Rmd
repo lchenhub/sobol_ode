@@ -13,6 +13,7 @@ library(tidyverse)
 library(gridExtra)
 library(purrr)
 library(ggpubr)
+library(deSolve)
 ```
 
 ##Implement model
@@ -21,3 +22,70 @@ Implement this model of forest growth (where forest size in measured in units of
   dC/dt = g ∗ (1 − C/K) for forests where carbon is at or above the threshold canopy closure
 
 K is a carrying capacity in units of carbon, and e forest (C), Canopy closure threshold and carrying capacity are all in units of carbon
+
+```{r}
+source("growth.R")
+```
+
+
+```{r}
+# Parameters
+params <- tibble(
+  pre_canopy_closure_rate = 0.01,
+  post_canopy_closure_rate = 2,
+  canopy_closure_threshold = 50,
+  carrying_capacity = 250
+)
+
+# Initial condition
+initial_forest_size <- 10
+
+# Time span
+time <- seq(0, 300, by = 1)
+
+# Solve the ODE
+out <- as_tibble(ode(y = initial_forest_size, times = time, func = forest_growth, parms = params))
+
+# Graph the results
+plot1 <- ggplot(out, aes(x = time, y = `out[, 2]`)) +
+  geom_line() +
+  labs(x = "Time (years)", y = "Forest Size (kgC)", title = "Forest Growth Model")
+
+# Run Sobol global sensitivity analysis
+param_ranges <- as.matrix(tibble(
+  pre_canopy_closure_rate = c(0.009, 0.011),
+  post_canopy_closure_rate = c(1.8, 2.2),
+  canopy_closure_threshold = c(45, 55),
+  carrying_capacity = c(225, 275)
+))
+
+sobol_output <- sobol(
+  model = forest_growth,
+  X = param_ranges,
+  conf = 0.95,
+  nboot = 100,
+  maxDim = length(param_ranges)
+)
+
+# Graph the sensitivity analysis results
+plot2 <- ggplot(data.frame(sobol_output$res$Y), aes(x = "", y = sobol_output$res$Y)) +
+  geom_boxplot() +
+  labs(x = "Maximum Forest Size (kgC)", title = "Sobol Sensitivity Analysis")
+
+# Print Sobol indices
+sobol_indices <- tibble(
+  "S" = sobol_output$res$S,
+  "T" = sobol_output$res$T,
+  Parameter = names(sobol_output$res$S)
+)
+
+# Display plots and Sobol indices
+grid.arrange(plot1, plot2, ncol = 2)
+print(sobol_indices)
+```
+
+
+```{r}
+
+```
+
