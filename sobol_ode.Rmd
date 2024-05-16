@@ -30,7 +30,7 @@ source("growth.R")
 
 ```{r}
 # Parameters
-params <- tibble(
+params <- list(
   pre_canopy_closure_rate = 0.01,
   post_canopy_closure_rate = 2,
   canopy_closure_threshold = 50,
@@ -44,44 +44,77 @@ initial_forest_size <- 10
 time <- seq(0, 300, by = 1)
 
 # Solve the ODE
-out <- as_tibble(ode(y = initial_forest_size, times = time, func = forest_growth, parms = params))
+ode <- ode(y = initial_forest_size, times = time, func = forest_growth, parms = params)
 
+```
+
+
+```{r}
 # Graph the results
-plot1 <- ggplot(out, aes(x = time, y = `out[, 2]`)) +
-  geom_line() +
+colnames(ode)=c("time","size")
+ggplot(as.data.frame(ode),aes(time, size) )+geom_line() +
   labs(x = "Time (years)", y = "Forest Size (kgC)", title = "Forest Growth Model")
+```
 
-# Run Sobol global sensitivity analysis
-param_ranges <- as.matrix(tibble(
-  pre_canopy_closure_rate = c(0.009, 0.011),
-  post_canopy_closure_rate = c(1.8, 2.2),
-  canopy_closure_threshold = c(45, 55),
-  carrying_capacity = c(225, 275)
-))
 
-sobol_output <- sobol(
-  model = forest_growth,
-  X = param_ranges,
-  conf = 0.95,
-  nboot = 100,
-  maxDim = length(param_ranges)
-)
+```{r}
+# Define parameter distributions
+parameter_means <- c(0.01, 2, 250, 50)
+parameter_sds <- parameter_means * 0.1
 
-# Graph the sensitivity analysis results
-plot2 <- ggplot(data.frame(sobol_output$res$Y), aes(x = "", y = sobol_output$res$Y)) +
-  geom_boxplot() +
-  labs(x = "Maximum Forest Size (kgC)", title = "Sobol Sensitivity Analysis")
+# Number of samples
+np <- 1000
 
-# Print Sobol indices
-sobol_indices <- tibble(
-  "S" = sobol_output$res$S,
-  "T" = sobol_output$res$T,
-  Parameter = names(sobol_output$res$S)
-)
+# Generate samples for X1
+set.seed(123)
+r_samples <- rnorm(np, mean = 0.01, sd = 0.01 * 0.1)
+g_samples <- rnorm(np, mean = 2, sd = 2 * 0.1)
+K_samples <- rnorm(np, mean = 250, sd = 250 * 0.1)
+canopy_samples <- rnorm(np, mean = 50, sd = 50 * 0.1)
+X1 <- cbind.data.frame(r = r_samples, g = g_samples, K = K_samples, canopy_threshold = canopy_samples)
 
-# Display plots and Sobol indices
-grid.arrange(plot1, plot2, ncol = 2)
-print(sobol_indices)
+# Generate samples for X2
+r_samples <- rnorm(np, mean = 0.01, sd = 0.01 * 0.1)
+g_samples <- rnorm(np, mean = 2, sd = 2 * 0.1)
+K_samples <- rnorm(np, mean = 250, sd = 250 * 0.1)
+canopy_samples <- rnorm(np, mean = 50, sd = 50 * 0.1)
+X2 <- cbind.data.frame(r = r_samples, g = g_samples, K = K_samples, canopy_threshold = canopy_samples)
+```
+
+
+```{r}
+# Run Sobol sensitivity analysis using sobolSalt
+sobol <- sobolSalt(model = NULL, X1, X2, nboot = 100)
+```
+
+
+```{r}
+# Extract Sobol indices
+S_indices <- sobol$S
+T_indices <- sobol$T
+
+# Convert Sobol indices to data frames for plotting
+S_indices_df <- as.data.frame(S_indices)
+T_indices_df <- as.data.frame(T_indices)
+
+# Plot the first-order Sobol indices
+ggplot(S_indices_df, aes(x = reorder(row.names(S_indices_df), original), y = original)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "First-Order Sobol Sensitivity Analysis",
+       x = "Parameters",
+       y = "First-Order Sensitivity Index (S)") +
+  theme_minimal() +
+  coord_flip()
+
+# Plot the total Sobol indices
+ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), original), y = original)) +
+  geom_bar(stat = "identity", fill = "red") +
+  labs(title = "Total Sobol Sensitivity Analysis",
+       x = "Parameters",
+       y = "Total Sensitivity Index (T)") +
+  theme_minimal() +
+  coord_flip()
+
 ```
 
 
