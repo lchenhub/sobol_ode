@@ -91,7 +91,7 @@ sobol
 ```
 
 
-```{r}
+```{r, warning=FALSE}
 
 # Convert Sobol indices to data frames for plotting
 X1_df <- as.data.frame(X1$canopy_threshold)
@@ -101,22 +101,22 @@ X2_df <- as.data.frame(X2$canopy_threshold)
 X2_df <- X2_df[!is.na(X2_df), ]
 
 # Plot the first-order Sobol indices
-ggplot(S_indices_df, aes(x = reorder(row.names(X1_df), X2_df), y = X2_df)) +
-  geom_bar(stat = "identity", fill = "blue") +
-  labs(title = "First-Order Sobol Sensitivity Analysis",
-       x = "Parameters",
-       y = "First-Order Sensitivity Index (S)") +
-  theme_minimal() +
-  coord_flip()
+# ggplot(S_indices_df, aes(x = reorder(row.names(X1_df), X2_df), y = X2_df)) +
+#   geom_bar(stat = "identity", fill = "blue") +
+#   labs(title = "First-Order Sobol Sensitivity Analysis",
+#        x = "Parameters",
+#        y = "First-Order Sensitivity Index (S)") +
+#   theme_minimal() +
+#   coord_flip()
 
 # Plot the total Sobol indices
-ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), T_indices_df), y = T_indices_df)) +
-  geom_bar(stat = "identity", fill = "red") +
-  labs(title = "Total Sobol Sensitivity Analysis",
-       x = "Parameters",
-       y = "Total Sensitivity Index (T)") +
-  theme_minimal() +
-  coord_flip()
+# ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), T_indices_df), y = T_indices_df)) +
+#   geom_bar(stat = "identity", fill = "red") +
+#   labs(title = "Total Sobol Sensitivity Analysis",
+#        x = "Parameters",
+#        y = "Total Sensitivity Index (T)") +
+#   theme_minimal() +
+#   coord_flip()
 
 
 #Plot as a boxplot 
