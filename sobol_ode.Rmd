@@ -98,7 +98,7 @@ S_indices_df <- as.data.frame(S_indices)
 T_indices_df <- as.data.frame(T_indices)
 
 # Plot the first-order Sobol indices
-ggplot(S_indices_df, aes(x = reorder(row.names(S_indices_df), original), y = original)) +
+ggplot(S_indices_df, aes(x = reorder(row.names(S_indices_df), T_indices_df), y = T_indices_df)) +
   geom_bar(stat = "identity", fill = "blue") +
   labs(title = "First-Order Sobol Sensitivity Analysis",
        x = "Parameters",
@@ -107,7 +107,7 @@ ggplot(S_indices_df, aes(x = reorder(row.names(S_indices_df), original), y = ori
   coord_flip()
 
 # Plot the total Sobol indices
-ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), original), y = original)) +
+ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), T_indices_df), y = T_indices_df)) +
   geom_bar(stat = "identity", fill = "red") +
   labs(title = "Total Sobol Sensitivity Analysis",
        x = "Parameters",
