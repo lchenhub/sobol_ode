@@ -115,6 +115,17 @@ ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), T_indices_df), y =
   theme_minimal() +
   coord_flip()
 
+
+#Try plotting as a boxplot (#5 on assignment prompt)
+ggplot(T_indices_df, aes(x = reorder(row.names(T_indices_df), params), y = params)) +
+  geom_boxplot(fill = "red") +  # Change to geom_boxplot() for box plot
+  labs(title = "Total Sobol Sensitivity Analysis",
+       x = "Parameters",
+       y = "Total Sensitivity Index (T)") +
+  theme_minimal() +
+  coord_flip()
+
+#okay I see the error now. S_indices and T_indices are empty
 ```
 
 
